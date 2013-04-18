@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <link rel="stylesheet" href="css/normalize.min.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+        <div class="header-container">
+            <header class="wrapper clearfix">
+                <h1 class="title">Sorcery Access Token Demo</h1>
+                <img src="img/tux.png" style="margin-top:10px; height:80px; float:right;" />
+            </header>
+        </div>
+
+        <div class="main-container">
+            <div class="main wrapper clearfix">
+                <aside>
+                    <h3>About</h3>
+                    <p>
+                    This is a quick demo of an access_token submodule for Sorcery.<br/>
+                    See <a href="https://github.com/fzagarzazu/sorcery/tree/access_token">https://github.com/fzagarzazu/sorcery/tree/access_token</a> for details.
+                    </p>
+                    <h3>How does it work?</h3>
+                    <ol>
+                      <li>The User is authenticated by an external OAuth 2.0 provider (Google).</li>
+                      <li>OAuth 2.0 provider returns an access token.</li>
+                      <li>The application (this) sends the access token to the server for login (see page code).</li>
+                      <li>Server sends request to OAuth provider with access token to authenticate user (server login mechanism).</li>
+                      <li>If successful, server returns an access token to the user's client (this) which shall be used in future requests to the server.</li>
+                    </ol>
+                    <h3>Server setup</h3>
+                    <ol>
+                      <li>
+                      This demo uses Google's OAuth 2.0 client-side flow for authentication, you will need a Google account for this to work.
+                      </li>
+                      <li>
+                      Ideally you should create a new project in <a href="https://code.google.com/apis/console/">Google APIs Console</a>, generate its
+                      OAuth 2.0 client ID and write down both the ID and the secret (<a href="https://developers.google.com/console/help/">Docs</a>).
+                      For token validation it can work without it.<br/>
+                      Test it with:<br/>
+                      <code>curl -v -k -X GET https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=ACCESS_TOKEN</code>
+                      <code>curl -v -k -X GET https://www.googleapis.com/oauth2/v1/userinfo?access_token=ACCESS_TOKEN</code>
+                      </li>
+                      <li>
+                      Remember to list: <code>https://localhost:8000</code> as a valid origin.
+                      </li>
+                      <li>
+                      Enter your client ID and secret in the following configuration file: <code>"config/initializers/sorcery.rb"</code> under the
+                      external providers section.
+                      </li>
+                      <li>
+                      This demo comes with self-signed SSL certificates, the use of <b>HTTPS</b> is required.<br/>
+                      Certificates directory: <code>"CA/"</code><br/>
+                      Documentation: <a href="http://www.debian-administration.org/articles/284">Creating and Using a self signed SSL Certificates in debian</a><br/>
+                      Private keys included, password: <code>pirates</code>.
+                      </li>
+                      <li>Start the server with <code>"thin -C thin.yaml start --ssl --ssl-verify --ssl-key-file CA/key.pem --ssl-cert-file CA/cert.pem"</code></li>
+                      <li>Remember to <code>"tail -f log/development.log"</code></li>
+                    </ol>
+                </aside>
+
+                <article>
+                    <header>
+                        <h2>Demo</h2>
+
+                        <span id="signinButton">
+                          <span
+                            class="g-signin"
+                            data-callback="signinCallback"
+                            data-clientid="506341372220"
+                            data-cookiepolicy="single_host_origin"
+                            data-requestvisibleactions="http://schemas.google.com/AddActivity"
+                            data-scope="https://www.googleapis.com/auth/plus.login">
+                          </span>
+                        </span>
+                        <br/><br/>
+                    </header>
+                    <section>
+                        <a class="get-treasure" href="#">Open Chest</a>
+                        <br/><br/>
+                        <img class="closed-chest" src="img/closed_treasure.png" style="height:120px;" />
+                        <img class="open-chest" src="img/open_treasure.png" style="height:120px;display:none;" />
+                        <br/><br/>
+                        <span class="info">Login and open the treasure chest</span>
+                        </div>
+                    </section>
+                    <footer></footer>
+                </article>
+
+            </div> <!-- #main -->
+        </div> <!-- #main-container -->
+
+        <div class="footer-container">
+            <footer class="wrapper">
+            </footer>
+        </div>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+
+        <script src="js/main.js"></script>
+
+        <script type="text/javascript">
+          var CrazyPirate = (function() {
+            var storageTokenId = 'API_Access_Token';
+                serverURL = 'https://localhost:8000';
+                serverPaths = {
+                  sessions: '/sessions',
+                  treasures: '/treasures'
+                };
+
+            return {
+              // Treasure Chest, get treasure from server
+              openTreasureChest: function() {
+                var that = this;
+                $.ajax({
+                  type: 'GET',
+                  url: serverURL + serverPaths['treasures'] + '/1',
+                  data: {
+                    access_token: that.tokenHandler.getToken()
+                  },
+                  success: function(data, textStatus, jqXHR) {
+                    console.log('Server request success');
+                    $('img.closed-chest').hide('fast', function() {
+                      $('img.open-chest').show();
+                      that.printInfo(': )');
+                    });
+                  },
+                  error: function(jqXHR, textStatus, errorThrown) {
+                    that.printInfo('Server request failed -- ' + jqXHR['status']);
+                  }
+                });
+              },
+              printInfo: function(msg) {
+                if (typeof msg === 'string') $('span.info').text(msg);
+              },
+              // Server API Access Token Handler (localStorage)
+              tokenHandler: {
+                setToken: function(accessToken) {
+                  localStorage.setItem(storageTokenId, accessToken);
+                },
+                getToken: function() {
+                  return localStorage.getItem(storageTokenId);
+                }
+              },
+              // Server Login
+              serverLogin: function(providerAccessToken, successFn) {
+                var that = this;
+                console.log('Attempting server login using provider access token..');
+
+                $.ajax({
+                  type: 'POST',
+                  url: serverURL + serverPaths['sessions'],
+                  data: {
+                    provider: 'google',
+                    access_token_hash: {
+                      access_token: providerAccessToken
+                    }
+                  },
+                  success: function(data, textStatus, jqXHR) {
+                    console.log('Server Login Success');
+                    // Save token
+                    that.tokenHandler.setToken(data['access_token']);
+
+                    if (typeof successFn === 'function') successFn();
+                  },
+                  error: function(jqXHR, textStatus, errorThrown) {
+                    console.log('Server Login Error');
+                    that.printInfo('Server login error');
+                  }
+                });
+              }
+            };
+         }());
+
+         $('a.get-treasure').on('click', function(event) {
+           event.preventDefault();
+           CrazyPirate.openTreasureChest();
+         });
+
+         function signinCallback(authResult) {
+           if (authResult['access_token']) { // success
+             console.log('OAuth Access Token: ' + authResult['access_token']);
+
+             // Login to server using provider access token
+             CrazyPirate.serverLogin(authResult['access_token'], function() {
+               $('#signinButton').hide();
+               CrazyPirate.printInfo('Server login success!');
+             });
+
+           } else if (authResult['error']) { // error
+             if (authResult['error'] !== 'immediate_failed') {
+               CrazyPirate.printInfo('Google authorization error -- ' + authResult['error']);
+             }
+           }
+         }
+
+         (function() {
+           var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+           po.src = 'https://apis.google.com/js/client:plusone.js';
+           var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+         })();
+        </script>
+
+    </body>
+</html>
