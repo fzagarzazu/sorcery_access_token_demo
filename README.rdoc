@@ -12,11 +12,11 @@ See https://github.com/fzagarzazu/sorcery/tree/access_token for details.
 
 2. Ideally you should edit <tt>config/initializers/sorcery.rb</tt> and set your Google's client_id and client_secret
 under the external providers section. But for token validation it can work without it, you can test it with
-<tt>curl -v -k -X GET https://www.googleapis.com/oauth2/v1/userinfo?access_token=ACCESS_TOKEN</tt> .
+       curl -v -k -X GET https://www.googleapis.com/oauth2/v1/userinfo?access_token=ACCESS_TOKEN
 
 
 3. Start server with:
-       <tt>"thin -C thin.yaml start --ssl --ssl-verify --ssl-key-file CA/key.pem --ssl-cert-file CA/cert.pem"</tt>
+       thin -C thin.yaml start --ssl --ssl-verify --ssl-key-file CA/key.pem --ssl-cert-file CA/cert.pem
 
 4. Open https://localhost:8000 in your browser.
 
