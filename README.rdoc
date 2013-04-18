@@ -11,7 +11,7 @@ See https://github.com/fzagarzazu/sorcery/tree/access_token for details.
 1. Run db migrations.
 
 2. You can change the default client_id for demo in <tt>public/index.html</tt> (see G+ sign_in data attributes),
-and edit <tt>config/initializers/sorcery.rb</tt> and set your Google's client_id and client_secret
+edit <tt>config/initializers/sorcery.rb</tt>, set your Google's client_id and client_secret
 under the external providers section.
 For token validation it can work without it, you can test it with
        curl -v -k -X GET https://www.googleapis.com/oauth2/v1/userinfo?access_token=ACCESS_TOKEN
