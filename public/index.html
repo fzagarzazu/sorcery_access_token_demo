@@ -49,9 +49,10 @@
                       This demo uses Google's OAuth 2.0 client-side flow for authentication, you will need a Google account for this to work.
                       </li>
                       <li>
-                      Ideally you should create a new project in <a href="https://code.google.com/apis/console/">Google APIs Console</a>, generate its
-                      OAuth 2.0 client ID and write down both the ID and the secret (<a href="https://developers.google.com/console/help/">Docs</a>).
-                      For token validation it can work without it.<br/>
+                      Create a new project in <a href="https://code.google.com/apis/console/">Google APIs Console</a>, enable G+ API service, and generate its
+                      OAuth 2.0 client ID, write down both the ID and the secret (<a href="https://developers.google.com/console/help/">Docs</a>).<br/>
+                      You can edit <code>public/index.html</code> and replace the client_id with your own.<br/>
+                      For server-side token validation it can work without it.<br/>
                       Test it with:<br/>
                       <code>curl -v -k -X GET https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=ACCESS_TOKEN</code>
                       <code>curl -v -k -X GET https://www.googleapis.com/oauth2/v1/userinfo?access_token=ACCESS_TOKEN</code>
@@ -82,7 +83,7 @@
                           <span
                             class="g-signin"
                             data-callback="signinCallback"
-                            data-clientid="506341372220"
+                            data-clientid="531413896709"
                             data-cookiepolicy="single_host_origin"
                             data-requestvisibleactions="http://schemas.google.com/AddActivity"
                             data-scope="https://www.googleapis.com/auth/plus.login">
